@@ -57,6 +57,7 @@ Inline image and content support for your favorite sites:
 * UStream
 * Vimeo
 * Youtube
+* Spotify
 
 #### And if you ever happen to get lost...
     Type /help - to show the full list of JabbR Commands
