@@ -1,11 +1,20 @@
 ﻿using JabbR.ContentProviders.Core;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JabbR.ContentProviders
 {
     public class SpotifyContentProvider : CollapsibleContentProvider
     {
+        private readonly IEnumerable<string> _validUrls = new HashSet<string>
+                                                             {
+                                                                 "http://open.spotify.com/track/",
+                                                                 "http://open.spotify.com/user/",
+                                                                 "http://open.spotify.com/album/"
+                                                             };
+
         protected override Task<ContentProviderResult> GetCollapsibleContent(ContentProviderHttpRequest request)
         {
             var spotifyUri = ExtractSpotifyUri(request.RequestUri.AbsolutePath);
@@ -13,7 +22,7 @@ namespace JabbR.ContentProviders
             return TaskAsyncHelper.FromResult(new ContentProviderResult()
                                                   {
                                                       Content = string.Format("<iframe src=\"https://embed.spotify.com/?uri=spotify:{0}\" width=\"300\" height=\"380\" frameborder=\"0\" allowtransparency=\"true\"></iframe>", spotifyUri),
-                                                      Title = string.Format("spotify:track:{0}", spotifyUri)
+                                                      Title = string.Format("spotify:{0}", spotifyUri)
                                                   });
         }
 
@@ -24,7 +33,7 @@ namespace JabbR.ContentProviders
 
         public override bool IsValidContent(Uri uri)
         {
-            return uri.AbsoluteUri.StartsWith("http://open.spotify.com/", StringComparison.CurrentCultureIgnoreCase);
+            return _validUrls.Any(x => uri.AbsoluteUri.StartsWith(x));
         }
     }
 }
